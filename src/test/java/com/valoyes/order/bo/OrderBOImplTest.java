@@ -45,6 +45,7 @@ public class OrderBOImplTest {
 
 		// then : comprobamos valos y verificamos la llamada del metodo
 		assertTrue(resultado);
+		
 		verify(dao).create(order);
 	}
 
@@ -59,6 +60,7 @@ public class OrderBOImplTest {
 
 		// then : comprobamos valos y verificamos la llamada del metodo
 		assertFalse(resultado);
+		
 		verify(dao).create(order);
 	}
 	
@@ -83,10 +85,27 @@ public class OrderBOImplTest {
 		
 		// then
 		assertTrue(resultado);
+		
 		verify(dao).read(123);
 		verify(dao).update(order);
 	}
 	
+	@Test
+	public void cancelOrder_Should_Cancel_not_The_Order() throws SQLException, BOException {
+		// given
+		Order order = new Order();
+		
+		// when : stubbing
+		when(dao.read(123)).thenReturn(order);
+		when(dao.update(order)).thenReturn(0);
+		boolean resultado = bo.cancelOrder(123);
+		
+		// then
+		assertFalse(resultado);
+		
+		verify(dao).read(123);
+		verify(dao).update(order);
+	}
 	
 
 }
