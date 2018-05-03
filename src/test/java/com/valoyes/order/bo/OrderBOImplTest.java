@@ -107,5 +107,25 @@ public class OrderBOImplTest {
 		verify(dao).update(order);
 	}
 	
+	@Test(expected=BOException.class)
+	public void cancelOrder_Should_ThrowBOException_OnRead() throws SQLException, BOException {
+		
+		// when
+		when(dao.read(123)).thenThrow(SQLException.class);
+		bo.cancelOrder(123);
+		
+		// este test verifica que la exception lanzada por el dao es wrapped en un BOException
+	}
+	
+	@Test(expected=BOException.class)
+	public void cancelOrder_Should_ThrowBOException_OnUpdate() throws SQLException, BOException {
+		// given
+		Order order = new Order();
+		
+		// when : stubbing
+		when(dao.read(123)).thenReturn(order);
+		when(dao.update(order)).thenThrow(SQLException.class);
+		bo.cancelOrder(123);
+	}
 
 }
