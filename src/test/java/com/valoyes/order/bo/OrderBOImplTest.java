@@ -38,7 +38,7 @@ public class OrderBOImplTest {
 		bo.setDao(dao);
 
 		// when
-		// si no estamos testeando por exceptiones, simplemente las lanzamos
+		// si no estamos testeando por excepciones, simplemente las lanzamos
 		Order order = new Order();
 		when(dao.create(order)).thenReturn(1);
 		boolean resultado = bo.placeOrder(order);
@@ -52,7 +52,7 @@ public class OrderBOImplTest {
 	public void placeOrder_Should_not_Create_An_Order() throws SQLException, BOException {
 
 		// when
-		// si no estamos testeando por exceptiones, simplemente las lanzamos
+		// si no estamos testeando por excepciones, simplemente las lanzamos
 		Order order = new Order();
 		when(dao.create(order)).thenReturn(0);
 		boolean resultado = bo.placeOrder(order);
@@ -60,6 +60,15 @@ public class OrderBOImplTest {
 		// then : comprobamos valos y verificamos la llamada del metodo
 		assertFalse(resultado);
 		verify(dao).create(order);
+	}
+	
+	@Test(expected=BOException.class)
+	public void placeOrder_Should_BOException() throws SQLException, BOException {
+
+		// when
+		Order order = new Order();
+		when(dao.create(order)).thenThrow(SQLException.class);
+		boolean resultado = bo.placeOrder(order);
 	}
 
 }
