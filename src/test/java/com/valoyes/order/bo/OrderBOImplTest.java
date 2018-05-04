@@ -2,6 +2,8 @@ package com.valoyes.order.bo;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -45,7 +47,8 @@ public class OrderBOImplTest {
 		// when
 		// si no estamos testeando por excepciones, simplemente las lanzamos
 		Order order = new Order();
-		when(dao.create(order)).thenReturn(1);
+		when(dao.create(any())).thenReturn(new Integer(1));
+		when(dao.create(any(Order.class))).thenReturn(new Integer(1));
 		boolean resultado = bo.placeOrder(order);
 
 		// then : comprobamos valos y verificamos la llamada del metodo
@@ -128,7 +131,7 @@ public class OrderBOImplTest {
 		Order order = new Order();
 		
 		// when : stubbing
-		when(dao.read(ORDER_ID)).thenReturn(order);
+		when(dao.read(anyInt())).thenReturn(order);
 		when(dao.update(order)).thenThrow(SQLException.class);
 		bo.cancelOrder(123);
 	}
