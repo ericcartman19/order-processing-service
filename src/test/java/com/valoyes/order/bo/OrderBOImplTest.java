@@ -2,12 +2,15 @@ package com.valoyes.order.bo;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.sql.SQLException;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -18,6 +21,8 @@ import com.valoyes.order.dao.dto.Order;
 
 public class OrderBOImplTest {
 
+	private static final int ORDER_ID = 123;
+	
 	@Mock
 	OrderDAO dao;
 	private OrderBOImpl bo;
@@ -79,14 +84,14 @@ public class OrderBOImplTest {
 		Order order = new Order();
 		
 		// when : stubbing
-		when(dao.read(123)).thenReturn(order);
+		when(dao.read(ORDER_ID)).thenReturn(order);
 		when(dao.update(order)).thenReturn(1);
 		boolean resultado = bo.cancelOrder(123);
 		
 		// then
 		assertTrue(resultado);
 		
-		verify(dao).read(123);
+		verify(dao).read(ORDER_ID);
 		verify(dao).update(order);
 	}
 	
@@ -96,23 +101,23 @@ public class OrderBOImplTest {
 		Order order = new Order();
 		
 		// when : stubbing
-		when(dao.read(123)).thenReturn(order);
+		when(dao.read(ORDER_ID)).thenReturn(order);
 		when(dao.update(order)).thenReturn(0);
 		boolean resultado = bo.cancelOrder(123);
 		
 		// then
 		assertFalse(resultado);
 		
-		verify(dao).read(123);
-		verify(dao).update(order);
+		verify(dao).read(ORDER_ID);
+		verify(dao, times(1)).update(order);
 	}
 	
 	@Test(expected=BOException.class)
 	public void cancelOrder_Should_ThrowBOException_OnRead() throws SQLException, BOException {
 		
 		// when
-		when(dao.read(123)).thenThrow(SQLException.class);
-		bo.cancelOrder(123);
+		when(dao.read(ORDER_ID)).thenThrow(SQLException.class);
+		bo.cancelOrder(ORDER_ID);
 		
 		// este test verifica que la exception lanzada por el dao es wrapped en un BOException
 	}
@@ -123,9 +128,44 @@ public class OrderBOImplTest {
 		Order order = new Order();
 		
 		// when : stubbing
-		when(dao.read(123)).thenReturn(order);
+		when(dao.read(ORDER_ID)).thenReturn(order);
 		when(dao.update(order)).thenThrow(SQLException.class);
 		bo.cancelOrder(123);
+	}
+	
+	@Test
+	public void deleteOrder_Deletes_The_Order() throws SQLException, BOException {
+		
+		// when : stubbing
+		when(dao.delete(ORDER_ID)).thenReturn(1);
+		boolean resultado = bo.deleteOrder(ORDER_ID);
+		
+		// then
+		assertTrue(resultado);
+		
+		verify(dao, atLeast(1)).delete(ORDER_ID);
+	}
+	
+	@Test
+	public void deleteOrder_do_not_Deletes_The_Order() throws SQLException, BOException {
+		
+		// when : stubbing
+		when(dao.delete(ORDER_ID)).thenReturn(0);
+		boolean resultado = bo.deleteOrder(ORDER_ID);
+		
+		// then
+		assertFalse(resultado);
+		
+		verify(dao).delete(ORDER_ID);
+	}
+	
+	
+	@Test(expected=BOException.class)
+	public void deleteOrder_ThrowsBOException() throws SQLException, BOException {
+		
+		// when
+		when(dao.delete(ORDER_ID)).thenThrow(SQLException.class);
+		bo.deleteOrder(ORDER_ID);
 	}
 
 }
