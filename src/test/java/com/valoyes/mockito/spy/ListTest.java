@@ -23,8 +23,8 @@ public class ListTest {
 	
 	@Test
 	public void test() {
-		myList.add("Sofia");
-		myList.add("Regla");
+//		myList.add("Sofia");
+//		myList.add("Regla");
 		
 		// mockeamos el metodo size() de la lista
 		doReturn(3).when(myList).size();
